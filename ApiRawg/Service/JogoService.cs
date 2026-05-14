@@ -1,6 +1,7 @@
 ﻿using ApiRawg.Data;
 using ApiRawg.Models;
 using Google.Cloud.Firestore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ApiRawg.Service
 {
@@ -54,6 +55,37 @@ namespace ApiRawg.Service
 
             return null;
 
+        }
+
+        public async Task<Jogo> Criar(Jogo jogo)
+        {
+
+            DocumentReference contadorId = _firestoreData.Db.Collection("contador").Document("contador_jogos");
+
+            int novoId = await _firestoreData.Db.RunTransactionAsync(async transaction => {
+
+
+                DocumentSnapshot snapshot = await transaction.GetSnapshotAsync(contadorId);
+
+                 int idAtual = 0;
+
+                 if (snapshot.Exists)
+                 {
+                     snapshot.TryGetValue("ultimoId", out idAtual);
+                 }
+
+                 int proximoId = idAtual + 1;
+
+                 Dictionary<string, object> atualizacaoContador = new Dictionary<string, object>
+                {
+                    { "ultimoId", proximoId }
+                };
+
+                 transaction.Set(contadorId, atualizacaoContador, SetOptions.MergeAll);
+                 return proximoId;
+             });
+
+            return null; 
         }
     }
 }
