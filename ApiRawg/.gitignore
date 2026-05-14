@@ -1,0 +1,15 @@
+﻿# Pastas de build do Visual Studio (Isso deixa o envio pro GitHub muito mais rápido!)
+[Bb]in/
+[Oo]bj/
+.vs/
+
+# Arquivos de usuário e cache
+*.user
+*.suo
+*.cache
+*.log
+
+# 🚨 IGNORAR CHAVES DE API E CREDENCIAIS 🚨
+chave_Api/
+firebase-key.json
+*.json # Opcional: ignora qualquer json se você não quiser subir nenhum pro github
