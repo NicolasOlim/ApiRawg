@@ -213,9 +213,9 @@ namespace ApiRawg.Controllers
                 existente.Classificacao = jogo.Classificacao;
                 existente.ImagemUrl = jogo.ImagemUrl;
                 existente.Upload = jogo.Upload;
-                
+
                 await _jogoService.Atualizar(id, existente);
-                return Ok(new {mensagem = $"Jogo Atualizado com Sucesso"});
+                return Ok(new { mensagem = $"Jogo Atualizado com Sucesso" });
             }
             catch (Exception ex)
             {
@@ -237,8 +237,39 @@ namespace ApiRawg.Controllers
                     });
                 }
             }
-        } 
-    
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                var existente = await _jogoService.ObterPorId(id);
+                if (existente == null)
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new
+                    {
+                        Erro = "Jogo não encontrado",
+                        Mensagem = $"Nenhum jogo encontrado com o ID: {id}"
+                    });
+                }
+                await _jogoService.Excluir(id);
+                return Ok(new { mensagem = $"Jogo Deletado com Sucesso" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao deletar jogo: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    Erro = "Falha Interna no Servidor",
+                    Mensagem = ex.Message
+                });
+            }
+
+        }
     }
 
 }

@@ -1,3 +1,8 @@
+using ApiRawg.Data;
+using ApiRawg.Service;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +12,31 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<FirestoreData>();
+builder.Services.AddScoped<JogoService>();
+
+var caminhoChave = Path.Combine(Directory.GetCurrentDirectory(),
+    "chave_API/firebase-key.json");
+var credential = GoogleCredential.FromFile(caminhoChave);
+
+var firestoreData = new FirestoreDbBuilder
+{
+    ProjectId = "apirawg",
+    Credential = credential,
+}.Build();
+
+builder.Services.AddCors(options =>
+{
+   options.AddPolicy("PermitirTudo", policy=>
+    {
+        policy.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -16,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
