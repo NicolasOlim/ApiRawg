@@ -62,30 +62,44 @@ namespace ApiRawg.Service
 
             DocumentReference contadorId = _firestoreData.Db.Collection("contador").Document("contador_jogos");
 
-            int novoId = await _firestoreData.Db.RunTransactionAsync(async transaction => {
+            int novoId = await _firestoreData.Db.RunTransactionAsync(async transaction =>
+            {
 
 
                 DocumentSnapshot snapshot = await transaction.GetSnapshotAsync(contadorId);
 
-                 int idAtual = 0;
+                int idAtual = 0;
 
-                 if (snapshot.Exists)
-                 {
-                     snapshot.TryGetValue("ultimoId", out idAtual);
-                 }
+                if (snapshot.Exists)
+                {
+                    snapshot.TryGetValue("ultimoId", out idAtual);
+                }
 
-                 int proximoId = idAtual + 1;
+                int proximoId = idAtual + 1;
 
-                 Dictionary<string, object> atualizacaoContador = new Dictionary<string, object>
+                Dictionary<string, object> atualizacaoContador = new Dictionary<string, object>
                 {
                     { "ultimoId", proximoId }
                 };
 
-                 transaction.Set(contadorId, atualizacaoContador, SetOptions.MergeAll);
-                 return proximoId;
-             });
+                transaction.Set(contadorId, atualizacaoContador, SetOptions.MergeAll);
+                return proximoId;
+            });
 
-            return null; 
+            return null;
+        }
+
+        public async Task Atualizar(string id, Jogo jogo)
+        {
+            DocumentReference docRef = _firestoreData.Db.Collection(_collectionName).Document(id);
+            await docRef.SetAsync(jogo, SetOptions.MergeAll);
+        }
+
+        public async Task Excluir(string id)
+        {
+            DocumentReference docRef = _firestoreData.Db.Collection(_collectionName).Document(id);
+            await docRef.DeleteAsync();
+
         }
     }
 }
