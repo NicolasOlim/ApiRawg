@@ -40,5 +40,20 @@ namespace ApiRawg.Service
             return jogos;
         }
 
+        public async Task<Jogo> ObterPorId(string id)
+        {
+            DocumentReference docRef = _firestoreData.Db.Collection(_collectionName).Document(id);
+            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                var jogo = snapshot.ConvertTo<Jogo>();
+                jogo.Id = snapshot.Id;
+                return jogo;
+            }
+
+            return null;
+
+        }
     }
 }
