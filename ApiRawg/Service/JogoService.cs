@@ -86,7 +86,7 @@ namespace ApiRawg.Service
                 return proximoId;
             });
 
-            return null;
+            return jogo;
         }
 
         public async Task Atualizar(string id, Jogo jogo)
