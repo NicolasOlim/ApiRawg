@@ -2,8 +2,16 @@ using ApiRawg.Data;
 using ApiRawg.Service;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpLogging(logging =>
+{
+
+    logging.LoggingFields = HttpLoggingFields.All;
+
+});
 
 // Add services to the container.
 
@@ -51,6 +59,11 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpLogging();
+}
 
 
     app.UseSwagger();
