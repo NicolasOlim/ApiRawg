@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<FirestoreData>();
 builder.Services.AddScoped<JogoService>();
+builder.Services.AddHttpClient();
 
 var caminhoChave = Path.Combine(Directory.GetCurrentDirectory(),
     "chave_API/firebase-key.json");
