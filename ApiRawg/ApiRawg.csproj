@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include=".gitignore" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Cloud.Firestore" Version="4.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
