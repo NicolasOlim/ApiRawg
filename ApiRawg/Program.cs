@@ -42,6 +42,8 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 
+// Se alguém entrar na raiz do site (/), será levado direto para o Swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
