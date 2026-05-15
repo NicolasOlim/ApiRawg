@@ -8,7 +8,6 @@ namespace ApiRawg.Controllers
     [ApiController]
     public class JogosController : ControllerBase
     {
-
         private readonly JogoService _jogoService;
 
         public JogosController(JogoService jogoService)
@@ -16,7 +15,14 @@ namespace ApiRawg.Controllers
             _jogoService = jogoService;
         }
 
-
+        /// <summary>
+        /// Retorna a lista completa de jogos cadastrados no banco de dados.
+        /// </summary>
+        /// <returns>Uma lista contendo todos os jogos.</returns>
+        /// <response code="200">Retorna a lista de jogos com sucesso.</response>
+        /// <response code="400">Se houver algum problema com os parâmetros de consulta.</response>
+        /// <response code="404">Se a coleção de jogos não for encontrada.</response>
+        /// <response code="500">Se ocorrer um erro interno no servidor (ex: falha no Firebase).</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,6 +67,16 @@ namespace ApiRawg.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Busca um jogo específico pelo seu ID.
+        /// </summary>
+        /// <param name="id">O identificador único do jogo (String).</param>
+        /// <returns>Os detalhes do jogo correspondente ao ID informado.</returns>
+        /// <response code="200">Retorna o jogo encontrado com sucesso.</response>
+        /// <response code="400">Se o ID fornecido for nulo ou vazio.</response>
+        /// <response code="404">Se nenhum jogo for encontrado com o ID especificado.</response>
+        /// <response code="500">Se ocorrer um erro interno no servidor.</response>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -125,6 +141,14 @@ namespace ApiRawg.Controllers
 
         }
 
+        /// <summary>
+        /// Cria e salva um novo jogo no banco de dados.
+        /// </summary>
+        /// <param name="jogo">O objeto JSON contendo os dados do jogo a ser criado.</param>
+        /// <returns>O jogo recém-criado junto com a rota para acessá-lo.</returns>
+        /// <response code="201">Retorna o jogo criado e o cabeçalho Location com a URI de acesso.</response>
+        /// <response code="400">Se os dados enviados forem nulos ou o nome do jogo estiver vazio.</response>
+        /// <response code="500">Se ocorrer um erro interno no servidor ao tentar salvar.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -178,6 +202,16 @@ namespace ApiRawg.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualiza integralmente os dados de um jogo existente.
+        /// </summary>
+        /// <param name="id">O ID do jogo que será atualizado.</param>
+        /// <param name="jogo">O objeto JSON contendo os novos dados do jogo.</param>
+        /// <returns>Uma mensagem de sucesso confirmando a atualização.</returns>
+        /// <response code="200">Se o jogo for atualizado com sucesso.</response>
+        /// <response code="400">Se o corpo da requisição for nulo ou inválido.</response>
+        /// <response code="404">Se o jogo com o ID especificado não for encontrado.</response>
+        /// <response code="500">Se ocorrer um erro interno no servidor ao tentar atualizar.</response>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -239,6 +273,14 @@ namespace ApiRawg.Controllers
             }
         }
 
+        /// <summary>
+        /// Exclui um jogo do banco de dados.
+        /// </summary>
+        /// <param name="id">O ID do jogo que será excluído.</param>
+        /// <returns>Uma mensagem de sucesso confirmando a exclusão.</returns>
+        /// <response code="200">Se o jogo for excluído com sucesso.</response>
+        /// <response code="404">Se o jogo com o ID especificado não for encontrado.</response>
+        /// <response code="500">Se ocorrer um erro interno no servidor ao tentar excluir.</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
