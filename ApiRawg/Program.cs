@@ -2,16 +2,10 @@ using ApiRawg.Data;
 using ApiRawg.Service;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.HttpLogging;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpLogging(logging =>
-{
-
-    logging.LoggingFields = HttpLoggingFields.All;
-
-});
 
 // Add services to the container.
 
@@ -60,23 +54,20 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpLogging();
-}
-
 
     app.UseSwagger();
-app.UseSwaggerUI(options => { 
+app.UseSwagger();
+app.UseSwaggerUI(options => {
+    // Comente ou apague a linha abaixo para o localhost voltar a encontrar o caminho:
+    options.RoutePrefix = string.Empty; 
 
-    options.RoutePrefix = string.Empty; // Define a raiz para o Swagger UI
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API RAWG V1"); // Define o endpoint do Swagger JSON
-
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API RAWG V1");
 });
 
-// Se alguém entrar na raiz do site (/), será levado direto para o Swagger
-// Redireciona, mas avisa o Swagger para não mostrar isso na tela
+// Mantenha esta linha para redirecionar quem entrar na raiz (/) para o /swagger
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+
+
 
 app.UseCors("PermitirTudo");
 app.UseHttpsRedirection();
