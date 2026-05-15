@@ -10,7 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API RAWG",
+        Description = "API para gerenciamento de jogos usando Firestore",
+
+    });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
+});
 
 builder.Services.AddSingleton<FirestoreData>();
 builder.Services.AddScoped<JogoService>();
@@ -40,7 +54,12 @@ var app = builder.Build();
 
 
     app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwaggerUI(options => { 
+
+    options.RoutePrefix = string.Empty; // Define a raiz para o Swagger UI
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API RAWG V1"); // Define o endpoint do Swagger JSON
+
+});
 
 // Se alguém entrar na raiz do site (/), será levado direto para o Swagger
 // Redireciona, mas avisa o Swagger para não mostrar isso na tela
