@@ -85,7 +85,11 @@ namespace ApiRawg.Service
                 transaction.Set(contadorId, atualizacaoContador, SetOptions.MergeAll);
                 return proximoId;
             });
+            string idString = novoId.ToString();
+            DocumentReference docRef = _firestoreData.Db.Collection(_collectionName).Document(idString);
 
+            jogo.Id = idString;
+            await docRef.SetAsync(jogo);
             return jogo;
         }
 
