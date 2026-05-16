@@ -2,9 +2,17 @@ using ApiRawg.Data;
 using ApiRawg.Service;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.HttpLogging;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpLogging(logging =>
+{
+
+    logging.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponseStatusCode;
+
+});
 
 
 // Add services to the container.
@@ -53,13 +61,14 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
+app.UseHttpLogging();
+
 
 
     app.UseSwagger();
 app.UseSwagger();
 app.UseSwaggerUI(options => {
-    // Comente ou apague a linha abaixo para o localhost voltar a encontrar o caminho:
-    options.RoutePrefix = string.Empty; 
+       options.RoutePrefix = string.Empty; 
 
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "API RAWG V1");
 });
