@@ -2,24 +2,20 @@ using ApiRawg.Data;
 using ApiRawg.Service;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
-using Serilog; // 1. Biblioteca de logs automáticos
+using Serilog;
 
-// 2. Configura o Serilog antes de tudo para gravar no terminal e criar a pasta de arquivos
+// 1. O Serilog vai gravar na sua tela (Console) e também criar um arquivo de texto no servidor sozinho
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/log-api.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("logs/api-log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 try
 {
-    Log.Information("Iniciando a API RAWG...");
-
     var builder = WebApplication.CreateBuilder(args);
 
-    // 3. Avisa o projeto para usar o Serilog como sistema oficial de logs
-    builder.Host.UseSerilog();
+    builder.Host.UseSerilog(); // Substitui o log padrão do .NET pelo Serilog
 
-    // --- SEUS SERVIÇOS ORIGINAIS COMEÇAM AQUI ---
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
 
@@ -54,26 +50,21 @@ try
     {
         options.AddPolicy("PermitirTudo", policy =>
         {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         });
     });
 
     var app = builder.Build();
 
-    // 4. Ativa o rastreador super leve de requisições do Serilog
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(); // Registra automaticamente as rotas chamadas e os status codes
 
-    // --- CONFIGURAÇÃO DO SWAGGER ADAPTADA ---
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.RoutePrefix = string.Empty; // Mantém na raiz para a MonsterASP funcionar!
+        options.RoutePrefix = string.Empty;
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "API RAWG V1");
     });
 
-    // --- MIDDLEWARES ---
     app.UseCors("PermitirTudo");
     app.UseHttpsRedirection();
     app.UseAuthorization();
@@ -83,11 +74,9 @@ try
 }
 catch (Exception ex)
 {
-    // Se der qualquer erro fatal que impeça a API de ligar, ele salva no log
-    Log.Fatal(ex, "A API falhou ao iniciar.");
+    Log.Fatal(ex, "Falha crítica na API");
 }
 finally
 {
-    // Garante que o arquivo seja salvo corretamente antes do programa fechar
     Log.CloseAndFlush();
 }

@@ -7,7 +7,7 @@ namespace ApiRawg.Service
 {
     public class JogoService
     {
-
+        private readonly string _apiKey = "53dad1fcdc4540d2a983ce2451f45b68";
         private readonly ILogger<JogoService> _logger;
         private readonly FirestoreData _firestoreData;
         private readonly string _collectionName = "jogos";
@@ -60,6 +60,14 @@ namespace ApiRawg.Service
         public async Task<Jogo> Criar(Jogo jogo)
         {
 
+            bool JogoReal = await ValidarJogo(jogo.Nome, jogo.Descricao);
+            if (!JogoReal)
+            {
+               _logger.LogWarning("Jogo '{Nome}' não encontrado na API RAWG. Criação cancelada.", jogo.Nome);
+                throw new Exception($"Jogo '{jogo.Nome}' não encontrado na API RAWG. Criação cancelada.");
+            }
+
+
             DocumentReference contadorId = _firestoreData.Db.Collection("contador").Document("contador_jogos");
 
             int novoId = await _firestoreData.Db.RunTransactionAsync(async transaction =>
@@ -104,6 +112,30 @@ namespace ApiRawg.Service
             DocumentReference docRef = _firestoreData.Db.Collection(_collectionName).Document(id);
             await docRef.DeleteAsync();
 
+        }
+
+        private async Task<bool> ValidarJogo(string nome, string descricao)
+        {
+            try
+            {
+                string apiUrl = $"https://api.rawg.io/api/games?key={_apiKey}";
+
+                var consulta = await _httpClient.GetAsync(apiUrl);
+
+                if (!consulta.IsSuccessStatusCode)
+                    return false;
+
+                var resposta = await consulta.Content.ReadAsStringAsync();
+
+                bool suscesso = !resposta.Contains("\"error\"");
+
+                return suscesso;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao validar jogo na API RAWG");
+                return false;
+            }
         }
     }
 }
