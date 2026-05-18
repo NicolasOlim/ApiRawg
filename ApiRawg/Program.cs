@@ -38,8 +38,7 @@ try
     });
 
     builder.Services.AddSingleton<FirestoreData>();
-    builder.Services.AddScoped<JogoService>();
-    builder.Services.AddHttpClient();
+    builder.Services.AddHttpClient<JogoService>();
 
     var caminhoChave = Path.Combine(Directory.GetCurrentDirectory(), "chave_API/firebase-key.json");
     var credential = GoogleCredential.FromFile(caminhoChave);

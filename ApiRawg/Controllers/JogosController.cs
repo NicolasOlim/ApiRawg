@@ -174,6 +174,22 @@ namespace ApiRawg.Controllers
                 });
             }
 
+           
+            var todosOsJogos = await _jogoService.Listar();
+
+            
+            bool jogoJaExiste = todosOsJogos.Any(j => j.Nome.Equals(jogo.Nome, StringComparison.OrdinalIgnoreCase));
+
+            if (jogoJaExiste)
+            {
+            
+                return Conflict(new
+                {
+                    Erro = "Jogo Duplicado",
+                    Mensagem = $"O jogo '{jogo.Nome}' já está cadastrado no sistema!"
+                });
+            }
+
             try
             {
 
