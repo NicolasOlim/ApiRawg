@@ -75,4 +75,3 @@ A rota principal da API é `/api/Jogos`. Abaixo está o resumo das operações d
 1. Clone o repositório:
    ```bash
    git clone [https://github.com/NicolasOlim/ApiRawg.git]
-   cd SEU_REPOSITORIO
